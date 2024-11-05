@@ -12,6 +12,10 @@ app.use(cors({
     credentials: true,
 }));
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+app.use(express.static(join(__dirname, 'src')));
+
 const server = createServer(app);
 const io = new Server(server, {
     connectionStateRecovery: {},
@@ -20,8 +24,6 @@ const io = new Server(server, {
         methods: ["GET", "POST"]
     }
 });
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 app.get('/', (req, res) => {
     res.sendFile(join(__dirname, 'index.html'));

@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
     res.sendFile(join(__dirname, 'index.html'));
 });
 
-app.get(`/:roomId`, (req, res) => {
+app.get(`/rooms/:roomId`, (req, res) => {
     res.sendFile(join(__dirname, 'socket.html'));
 })
 

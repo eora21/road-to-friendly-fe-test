@@ -38,10 +38,10 @@
             return;
         }
 
-        const {participants, hostFlag} = response.body;
+        const {participants, hostId} = response.body;
 
         const item = document.createElement('li');
-        item.textContent = `참여자 ${participants.length}명, 내가 호스트: ${hostFlag}`;
+        item.textContent = `참여자 ${participants.length}명, 내가 호스트: ${socket.id === hostId}`;
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
     });

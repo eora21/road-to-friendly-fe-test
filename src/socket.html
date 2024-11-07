@@ -20,7 +20,7 @@
 <ul id="messages"></ul>
 <form id="form" action="">
     <input id="input" autocomplete="off" /><button>Send</button>
-    <button id="toggle-btn">Disconnect</button>
+    <button id="start-btn">start</button>
 </form>
 </body>
 <script src="/socket.io/socket.io.js"></script>
@@ -60,7 +60,7 @@
 
     socket.on('participant:join', ({ participantId, nickname }) => {
         const item = document.createElement('li');
-        item.textContent = `${nickname}님이 입장하셨습니다.`;
+        item.textContent = `${participantId} ${nickname}님이 입장하셨습니다.`;
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
     });
@@ -86,17 +86,20 @@
         window.scrollTo(0, document.body.scrollHeight);
     });
 
-    const toggleButton = document.getElementById('toggle-btn');
+    const toggleButton = document.getElementById('start-btn');
 
     toggleButton.addEventListener('click', (e) => {
         e.preventDefault();
-        if (socket.connected) {
-            toggleButton.innerText = 'Connect';
-            socket.disconnect();
-        } else {
-            toggleButton.innerText = 'Disconnect';
-            socket.connect();
-        }
+
+        socket.emit('participant:host:start');
+    });
+
+    socket.on('empathy:start', ({questions}) => {
+        const item = document.createElement('li');
+        item.textContent = '방장이 시작 버튼을 눌렀습니다.'
+        console.log(JSON.stringify(questions, null, 2));
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
     });
 </script>
 </html>

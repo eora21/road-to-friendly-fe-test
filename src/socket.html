@@ -20,7 +20,7 @@
 <ul id="messages"></ul>
 <form id="form" action="">
     <input id="input" autocomplete="off" /><button>Send</button>
-    <button id="start-btn">start</button>
+    <button id="result-btn">start</button>
 </form>
 </body>
 <script src="/socket.io/socket.io.js"></script>
@@ -33,6 +33,7 @@
     });
 
     socket.emit('join', {roomId: uuid}, (response) => {
+        console.log(response);
         if (response.status === 'error') {
             alert(response.message);
             return;
@@ -53,7 +54,7 @@
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         if (input.value) {
-            socket.emit('client:update', {nickname: input.value});
+            socket.emit('keyword:pick', {questionId: 1, keyword: input.value});
             input.value = '';
         }
     });
@@ -86,12 +87,21 @@
         window.scrollTo(0, document.body.scrollHeight);
     });
 
-    const toggleButton = document.getElementById('start-btn');
+    socket.on('empathy:keyword:count', ({questionId, keyword, count}) => {
+        const item = document.createElement('li');
+        item.textContent = `${ questionId } ${ keyword } ${ count }`;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+
+    const toggleButton = document.getElementById('result-btn');
 
     toggleButton.addEventListener('click', (e) => {
         e.preventDefault();
 
-        socket.emit('participant:host:start');
+        socket.emit('keyword:result', (response) => {
+            console.log(response)
+        });
     });
 
     socket.on('empathy:start', ({questions}) => {

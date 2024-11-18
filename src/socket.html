@@ -99,8 +99,13 @@
     toggleButton.addEventListener('click', (e) => {
         e.preventDefault();
 
-        socket.emit('keyword:result', (response) => {
-            console.log(response)
+        socket.emit('client:host:start', (response) => {
+            if (response.status === 'error') {
+                alert(response.message);
+                return;
+            }
+
+            console.log(response);
         });
     });
 
@@ -110,6 +115,14 @@
         console.log(JSON.stringify(questions, null, 2));
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
+    });
+
+    socket.on('empathy:result', (result) => {
+        console.log(result)
+    });
+
+    socket.on('error', ({status, message}) => {
+        alert(`${status}: ${message}`);
     });
 </script>
 </html>

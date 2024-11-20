@@ -20,7 +20,9 @@
 <ul id="messages"></ul>
 <form id="form" action="">
     <input id="input" autocomplete="off" /><button>Send</button>
-    <button id="result-btn">start</button>
+    <button id="start-btn">start</button>
+    <button id="share-btn">share</button>
+    <button id="next-btn">next</button>
 </form>
 </body>
 <script src="/socket.io/socket.io.js"></script>
@@ -54,7 +56,10 @@
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         if (input.value) {
-            socket.emit('keyword:pick', {questionId: 1, keyword: input.value});
+            socket.emit('keyword:pick', {questionId: 1, keyword: input.value}, (response) => {
+                console.log(response);
+            });
+
             input.value = '';
         }
     });
@@ -94,9 +99,9 @@
         window.scrollTo(0, document.body.scrollHeight);
     });
 
-    const toggleButton = document.getElementById('result-btn');
+    const startButton = document.getElementById('start-btn');
 
-    toggleButton.addEventListener('click', (e) => {
+    startButton.addEventListener('click', (e) => {
         e.preventDefault();
 
         socket.emit('client:host:start', (response) => {
@@ -119,6 +124,38 @@
 
     socket.on('empathy:result', (result) => {
         console.log(result)
+    });
+
+    const shareButton = document.getElementById('share-btn');
+
+    shareButton.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        socket.emit('interest:youtube', {link: 'https://youtu.be/cq-A2RJC7fg?feature=shared'});
+    });
+
+    socket.on('share:interest:broadcast', ({participantId, resourceType, resourceUrl, nowQueueSize}) => {
+        const item = document.createElement('li');
+
+        item.textContent = resourceType === undefined ? '큐가 비어있습니다' : `${participantId}의 ${resourceType}으로 ${resourceUrl} 도착, 현재 큐 사이즈: ${nowQueueSize}`
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+
+    socket.on('share:interest:add', (nowQueueSize) => {
+        const item = document.createElement('li');
+
+        item.textContent = `현재 큐 사이즈: ${nowQueueSize}`
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+
+    const nextButton = document.getElementById('next-btn');
+
+    nextButton.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        socket.emit('interest:next');
     });
 
     socket.on('error', ({status, message}) => {

@@ -31,7 +31,7 @@
     const uuid = pathSegments[pathSegments.length - 1];
 
     const socket = io("http://localhost:8080", {
-        cors: { origin: '*' }
+        withCredentials: true
     });
 
     socket.emit('join', {roomId: uuid}, (response) => {

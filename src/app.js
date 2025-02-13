@@ -8,7 +8,7 @@ import cors from 'cors';
 const app = express();
 
 app.use(cors({
-    origin: "*",
+    origin: "http://localhost:8080/rooms",
     credentials: true,
 }));
 

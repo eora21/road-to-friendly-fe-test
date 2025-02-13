@@ -53,16 +53,13 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ test: true })
+                credentials: 'include'
             });
 
-            if (response.redirected) {
-                // 리다이렉트 URL이 있다면 해당 주소로 이동
-                window.location.href = response.url;
-            } else {
-                statusDiv.textContent = '리다이렉트 응답이 아닙니다.';
-                statusDiv.className = 'error';
-            }
+            const json = await response.json();
+            console.log(json);
+            const roomId = json.roomId;
+            window.location.href = `/rooms/${roomId}`;
         } catch (error) {
             statusDiv.textContent = '오류 발생: ' + error.message;
             statusDiv.className = 'error';
